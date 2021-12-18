@@ -1,6 +1,6 @@
 # Send.lk Python SDK
 
-sendlk is a python SDK for the send.lk SMS getaway.
+sendlk is a python SDK for the [send.lk](https://send.lk) SMS getaway.
 
 ## Installation
 
