@@ -2,6 +2,10 @@
 
 sendlk is a python SDK for the [send.lk](https://send.lk) SMS getaway.
 
+## Example
+
+Here is an article of example how to use this package with FastAPI -> [ishanga.hashnode.dev](https://ishanga.hashnode.dev/create-otpmobile-verification-api-with-python-fastapi-and-sendlk-sms-gateway)
+
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install sendlk.

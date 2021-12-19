@@ -39,7 +39,7 @@ setup(
     keywords='send.lk sms getaway',
     install_requires=install_requires,
     packages=['sendlk'],
-    download_url='',
+    download_url='https://github.com/ishangavidusha/sendlk-sdk-python/archive/refs/tags/v0.0.1.tar.gz',
     python_requires='>=3.6',
     classifiers=[
         'Development Status :: 4 - Beta',
