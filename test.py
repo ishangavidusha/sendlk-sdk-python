@@ -10,16 +10,20 @@ PHONE_NUMBER = os.environ.get("PHONE_NUMBER")
 
 sendlk.initialize(SENDLK_TOKEN, SECRET)
 
-from sendlk.responses import SmsResponse
+from sendlk.responses import SmsResponse, ProfileResponse
 from sendlk.exceptions import SendLKException
-from sendlk.engine import SMS
+from sendlk.engine import SMS, Profile
 from sendlk.options import SendLKVerifyOption, SendLKCodeTemplet
 
 try:
     response: SmsResponse = SMS.send(PHONE_NUMBER, "Hello World!", SENDER_ID)
     print(response)
-    status_response: SmsResponse = SMS.get_status(response.uid)
-    print(status_response)
+except SendLKException as e:
+    print(e)
+
+try:
+    response: ProfileResponse = Profile.balance()
+    print(response.remaining)
 except SendLKException as e:
     print(e)
 

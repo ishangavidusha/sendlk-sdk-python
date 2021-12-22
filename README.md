@@ -24,13 +24,22 @@ import sendlk
 sendlk.initialize("sendlk-token", "my-custom-super-secret")
 
 # Send SMS
-from sendlk.responses import SmsResponse
+from sendlk.responses import SmsResponse, ProfileResponse
 from sendlk.exceptions import SendLKException
-from sendlk.engine import SMS
+from sendlk.engine import SMS, Profile
 
 try:
     response: SmsResponse = SMS.send("07XXXXXXXX", "Hello World!", "SendTest")
     print(response)
+except SendLKException as e:
+    print(e)
+
+```
+## Check remaining balance
+```python
+try:
+    response: ProfileResponse = Profile.balance()
+    print(response.remaining)
 except SendLKException as e:
     print(e)
 

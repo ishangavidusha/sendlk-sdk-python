@@ -1,6 +1,6 @@
 import json
 from requests.models import HTTPError, Response
-from sendlk.responses import SmsResponse
+from sendlk.responses import ProfileResponse, SmsResponse
 from sendlk.exceptions import SendLKException
 from sendlk.options import SendLKVerifyOption
 from sendlk._utils import encrypt_token, decrypt_token
@@ -9,6 +9,7 @@ import re
 from sendlk import _client
 
 _SEND_PATH = "sms/send"
+_BALANCE_PATH = "balance"
 _HTTP_CLIENT = _client.HttpClient.get_instance()
 _REGEX_PHONE_NUMBER = re.compile(r"^(?:0|94|\+94|0094)?(?:(11|21|23|24|25|26|27|31|32|33|34|35|36|37|38|41|45|47|51|52|54|55|57|63|65|66|67|81|91)(0|2|3|4|5|7|9)|7(0|1|2|4|5|6|7|8)\d)\d{6}$")
 
@@ -181,3 +182,23 @@ class SMS:
         except Exception as e:
             raise SendLKException(message=str(e))
         
+class Profile:
+    @classmethod
+    def balance(self) -> ProfileResponse:
+        """
+        Get the balance.
+        Returns:
+            ProfileResponse -- The response.
+            ProfileResponse.remaining: int = The remaining balance.
+            ProfileResponse.used: int = The used balance.
+            ProfileResponse.expired_on: str = The date when the balance expires.
+        Raises:
+            SendLKException -- If the response is not a valid.
+        """
+        response: Response = _HTTP_CLIENT.get(_BALANCE_PATH)
+        response.raise_for_status()
+        response_data = response.json()
+        if response_data.get("status", None) == "success":
+            return ProfileResponse(message=response_data.get("message", None), data=response_data.get("data"))
+        else:
+            raise SendLKException(message=response_data.get("message", None))
