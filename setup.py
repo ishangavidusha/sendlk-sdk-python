@@ -21,28 +21,36 @@ long_description = ""
 with open(readme_path) as fp:
     long_description = fp.read()
 
+__version__ = about['__version__']
+__title__ = about['__title__']
+__url__ = about['__url__']
+__author__ = about['__author__']
+__author_email__ = about['__author_email__']
+__license__ = about['__license__']
+
+
 install_requires = [
     'requests>=2.26.0',
     'cryptography>=36.0.1'
 ]
 
 setup(
-    name=about['__title__'],
-    version=about['__version__'],
+    name=__title__,
+    version=__version__,
     description='Send.lk Python SDK',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url=about['__url__'],
-    author=about['__author__'],
-    author_email=about['__author_email__'],
-    license=about['__license__'],
+    url=__url__,
+    author=__author__,
+    author_email=__author_email__,
+    license=__license__,
     keywords='send.lk sms getaway',
     install_requires=install_requires,
     packages=['sendlk'],
-    download_url='https://github.com/ishangavidusha/sendlk-sdk-python/archive/refs/tags/v0.0.1.tar.gz',
+    download_url=f'https://github.com/ishangavidusha/sendlk-sdk-python/archive/refs/tags/v{__version__}.tar.gz',
     python_requires='>=3.6',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Build Tools',
         'Programming Language :: Python :: 3',
@@ -51,7 +59,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
-        'License :: OSI Approved :: Apache Software License',
+        'License :: OSI Approved :: MIT License',
     ],
 )
 

@@ -4,7 +4,7 @@ sendlk is a python SDK for the [send.lk](https://send.lk) SMS getaway.
 
 ## Example
 
-Here is an article of example how to use this package with FastAPI -> [ishanga.hashnode.dev](https://ishanga.hashnode.dev/create-otpmobile-verification-api-with-python-fastapi-and-sendlk-sms-gateway)
+Here is an article of example, How to use this package with FastAPI -> [ishanga.hashnode.dev](https://ishanga.hashnode.dev/create-otpmobile-verification-api-with-python-fastapi-and-sendlk-sms-gateway)
 
 ## Installation
 
@@ -13,6 +13,13 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install sendlk.
 ```bash
 pip install sendlk
 ```
+## Features
+- Send Messages
+- Send Verify Code (Package's feature)
+- Validate Verify Code (Package's feature)
+- Check Balance
+- _TODO: Contacts_
+- _TODO: Message History_
 
 ## Send Normal SMS
 
@@ -23,7 +30,6 @@ import sendlk
 # secret will use in the OTP/Phone number verify module
 sendlk.initialize("sendlk-token", "my-custom-super-secret")
 
-# Send SMS
 from sendlk.responses import SmsResponse, ProfileResponse
 from sendlk.exceptions import SendLKException
 from sendlk.engine import SMS, Profile
@@ -31,15 +37,6 @@ from sendlk.engine import SMS, Profile
 try:
     response: SmsResponse = SMS.send("07XXXXXXXX", "Hello World!", "SendTest")
     print(response)
-except SendLKException as e:
-    print(e)
-
-```
-## Check remaining balance
-```python
-try:
-    response: ProfileResponse = Profile.balance()
-    print(response.remaining)
 except SendLKException as e:
     print(e)
 
@@ -79,7 +76,25 @@ except SendLKException as e:
     print(e)
 
 ```
+## Check remaining balance
+```python
+import sendlk
 
+# Befor import any module from sendlk you should initialize it first
+# secret will use in the OTP/Phone number verify module
+sendlk.initialize("sendlk-token", "my-custom-super-secret")
+
+from sendlk.responses import SmsResponse, ProfileResponse
+from sendlk.exceptions import SendLKException
+from sendlk.engine import SMS, Profile
+
+try:
+    response: ProfileResponse = Profile.balance()
+    print(response.remaining)
+except SendLKException as e:
+    print(e)
+
+```
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
