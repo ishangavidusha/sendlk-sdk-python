@@ -10,11 +10,11 @@ class SmsResponse(BaseResponse):
     def __init__(self, status: str = "SUCCESS", message: str = "", data: dict = {}):
         super().__init__(status, message)
         self._uid = data.get('uid')
-        self._receiver = data.get('to', None)
-        self._sender = data.get('from', None)
-        self._text = data.get('message', None)
-        self._text_status = data.get('status', None)
-        self._cost = data.get('cost', None)
+        self._receiver = data.get('to')
+        self._sender = data.get('from')
+        self._text = data.get('message')
+        self._text_status = data.get('status')
+        self._cost = data.get('cost')
         self._data = {}
         
     @property

@@ -49,9 +49,8 @@ class App(IApp):
     
     @staticmethod
     def get_headers() -> dict:
-        headers = {
+        return {
             "Authorization": "Bearer " + App.__instance.token,
             "Content-Type": "application/json",
             "Accept": "application/json"
         }
-        return headers

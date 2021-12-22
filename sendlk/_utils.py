@@ -18,29 +18,29 @@ def encrypt_token(length: int = 4, expire: int = 3) -> tuple:
     
     if not length or not isinstance(length, int):
         length = 4
-    
+
     if not expire or not isinstance(expire, int) or expire < 1:
         expire = 3
-    
+
     if length < 1:
         raise SendLKException(message="Length must be greater than 0.")
-    
+
     digits = "0123456789"
-    
+
     # Code Generator
-    code = ""
-    for i in range(length):
-        code += digits[random.randint(0, len(digits) - 1)]
-    
+    code = "".join(
+        digits[random.randint(0, len(digits) - 1)] for _ in range(length)
+    )
+
     # Time stamp
     milliseonds = int(time() * 1000)
-    
+
     payload_string = f"{milliseonds}:{code}:{expire}"
 
     # Encrypt
     cipher_suite = Fernet(App.secret.encode())
     payload = cipher_suite.encrypt(payload_string.encode()).decode()
-    
+
     return (payload, code)
 
 def decrypt_token(token: str, verify_code: str) -> str:
