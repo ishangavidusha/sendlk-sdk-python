@@ -13,7 +13,8 @@ sendlk.initialize(SENDLK_TOKEN, SECRET)
 from sendlk.responses import SmsResponse, ProfileResponse
 from sendlk.exceptions import SendLKException
 from sendlk.engine import SMS, Profile
-from sendlk.options import SendLKVerifyOption, SendLKCodeTemplet
+from sendlk.options import SendLKVerifyOption, SendLKCodeTemplate
+from cryptography.fernet import Fernet
 
 try:
     response: SmsResponse = SMS.send(PHONE_NUMBER, "Hello World!", SENDER_ID)
@@ -27,18 +28,18 @@ try:
 except SendLKException as e:
     print(e)
 
-class CustomCodeTemplet(SendLKCodeTemplet):
+class CustomCodeTemplate(SendLKCodeTemplate):
     def __init__(self):
         super().__init__()
         
     def text(self, code: str) -> str:
-        return f"{code} is the varification code for foo serveice."
+        return f"{code} is the verification code for foo service."
     
 options: SendLKVerifyOption = SendLKVerifyOption(
     code_length=6,
     expires_in=5,
     sender_id=SENDER_ID,
-    code_templet=CustomCodeTemplet()
+    code_template=CustomCodeTemplate()
 )
 
 try:

@@ -1,6 +1,8 @@
 """Setup file for distribution artifacts."""
+
 from __future__ import print_function
 
+import pathlib
 from os import path
 import sys
 
@@ -18,9 +20,7 @@ with open(about_path) as fp:
     exec(fp.read(), about)
 
 long_description = ""
-with open(readme_path) as fp:
-    long_description = fp.read()
-
+long_description = pathlib.Path(readme_path).read_text()
 __version__ = about['__version__']
 __title__ = about['__title__']
 __url__ = about['__url__']

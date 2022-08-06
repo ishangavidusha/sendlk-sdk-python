@@ -33,9 +33,9 @@ def encrypt_token(length: int = 4, expire: int = 3) -> tuple:
     )
 
     # Time stamp
-    milliseonds = int(time() * 1000)
+    milliseconds = int(time() * 1000)
 
-    payload_string = f"{milliseonds}:{code}:{expire}"
+    payload_string = f"{milliseconds}:{code}:{expire}"
 
     # Encrypt
     cipher_suite = Fernet(App.secret.encode())
@@ -54,29 +54,21 @@ def decrypt_token(token: str, verify_code: str) -> str:
     """
     if not token or not isinstance(token, str):
         raise SendLKException(message="Invalid token.")
-    
     if not verify_code or not isinstance(verify_code, str):
         raise SendLKException(message="Invalid code.")
-    
     try:
         cipher_suite = Fernet(App.secret.encode())
         payload = cipher_suite.decrypt(token.encode()).decode()
-        
         if not payload:
             raise SendLKException(message="Invalid token.")
-        
         token_time, code, expire = payload.split(":")
         current_time = int(time() * 1000)
-        
-        if int(token_time) + (int(expire) * 60000) < current_time:
+        if int(token_time) + int(expire) * 60000 < current_time:
             raise SendLKException(message="Token expired.")
-        
         if code != verify_code:
             raise SendLKException(message="Invalid code.")
-        
         return code
-        
     except SendLKException as e:
         raise e
     except Exception as e:
-        raise SendLKException(message=f"Error decrypting token: {e}")
+        raise SendLKException(message=f"Error decrypting token: {e}") from e

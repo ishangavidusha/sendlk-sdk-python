@@ -20,7 +20,7 @@ class HttpClient:
             ValueError: If host is None.
         """
         if HttpClient.__instance is not None:
-            raise Exception("This class is a singleton!")
+            raise ValueError("HttpClient is a singleton class. Use get_instance() to get the instance.")
         self.host = App.url
         self.timeout = DEFAULT_TIMEOUT_SECONDS
         self.session = requests.Session()
@@ -35,10 +35,7 @@ class HttpClient:
         Returns:
             HttpClient: The instance. 
         """
-        if HttpClient.__instance is None:
-            return HttpClient()
-        else:
-            return HttpClient.__instance
+        return HttpClient() if HttpClient.__instance is None else HttpClient.__instance
     
     @staticmethod
     def get(path: str, params: dict = None) -> requests.Response:

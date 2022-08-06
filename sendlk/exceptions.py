@@ -14,4 +14,4 @@ class SendLKException(Exception):
         return self._message
     
     def __str__(self):
-        return '{} : {}'.format(self.status, self.message)
+        return f'{self.status} : {self.message}'

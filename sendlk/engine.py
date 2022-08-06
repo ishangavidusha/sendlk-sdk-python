@@ -15,18 +15,18 @@ _REGEX_PHONE_NUMBER = re.compile(r"^(?:0|94|\+94|0094)?(?:(11|21|23|24|25|26|27|
 
 class SMS:
     @classmethod
-    def _validate_number(self, number: str) -> str:
+    def _validate_number(cls, number: str) -> str:
         """
         Validate the phone number.
         """
         if number is None or not isinstance(number, str):
             raise SendLKException(message="Invalid number")
         if not _REGEX_PHONE_NUMBER.match(number):
-            raise SendLKException(message="Invalid phone number: {}".format(number))
+            raise SendLKException(message=f"Invalid phone number: {number}")
         return number
     
     @classmethod
-    def _validate_text(self, text: str) -> str:
+    def _validate_text(cls, text: str) -> str:
         """
         Validate the text.
         """
@@ -37,7 +37,7 @@ class SMS:
         return text
     
     @classmethod
-    def _validate_sender_id(self, sender_id: str) -> str:
+    def _validate_sender_id(cls, sender_id: str) -> str:
         """
         Validate the sender id.
         """
@@ -48,18 +48,19 @@ class SMS:
         return sender_id
     
     @classmethod
-    def get_status(self, uid: str) -> SmsResponse:
+    def get_status(cls, uid: str) -> SmsResponse:
         """
         Get the status of a message.
         """
         if uid is None or not isinstance(uid, str):
             raise SendLKException(message="Invalid uid")
         try:
-            response: Response = _HTTP_CLIENT.get(_SEND_PATH + f"/{uid}")
+            response: Response = _HTTP_CLIENT.get(f"{_SEND_PATH}/{uid}")
             response.raise_for_status()
             response_data = response.json()
             if response_data.get("status", None) == "success":
                 return SmsResponse(message=response_data.get("message", None), data=response_data.get("data"))
+
             else:
                 raise SendLKException(message=response_data.get("message", None))
         except SendLKException as e:
@@ -70,13 +71,13 @@ class SMS:
                 error = json.loads(e.response.text)
             except:
                 raise SendLKException(message=str(e.response.text))
-            raise SendLKException(message=error.get("message", str(error)))
+            raise SendLKException(message=error.get("message", str(error))) from e
         except Exception as e:
-            raise SendLKException(message=str(e))
+            raise SendLKException(message=str(e)) from e
 
     
     @classmethod
-    def send(self, number: str, text: str, sender_id: str) -> SmsResponse:
+    def send(cls, number: str, text: str, sender_id: str) -> SmsResponse:
         """
         Send an SMS.
         Arguments:
@@ -89,27 +90,18 @@ class SMS:
             SendLKException -- If the args not valid.
             Exception: If the response is not a valid.
         """
-        number = self._validate_number(number)
-        
-        text = self._validate_text(text)
-        
-        sender_id = self._validate_sender_id(sender_id)
-        
-        
-        data = {
-            "recipient": number,
-            "sender_id": sender_id,
-            "message": text
-        }
-        
+        number = cls._validate_number(number)
+        text = cls._validate_text(text)
+        sender_id = cls._validate_sender_id(sender_id)
+        data = {"recipient": number, "sender_id": sender_id, "message": text}
         response_data = {}
-        
         try:
             response: Response = _HTTP_CLIENT.post(path=_SEND_PATH, data=data)
             response.raise_for_status()
             response_data = response.json()
             if response_data.get("status", None) == "success":
                 return SmsResponse(message=response_data.get("message", None), data=response_data.get("data"))
+
             else:
                 raise SendLKException(message=response_data.get("message", None))
         except SendLKException as e:
@@ -120,12 +112,12 @@ class SMS:
                 error = json.loads(e.response.text)
             except:
                 raise SendLKException(message=str(e.response.text))
-            raise SendLKException(message=error.get("message", str(error)))
+            raise SendLKException(message=error.get("message", str(error))) from e
         except Exception as e:
-            raise SendLKException(message=str(e))
+            raise SendLKException(message=str(e)) from e
 
     @classmethod
-    def send_verify_code(self, number: str, verify_option: SendLKVerifyOption) -> SmsResponse:
+    def send_verify_code(cls, number: str, verify_option: SendLKVerifyOption) -> SmsResponse:
         """
         Send a verify code to a number.
         Arguments:
@@ -137,26 +129,25 @@ class SMS:
             SendLKException -- If the args not valid.
             Exception: If the response is not a valid.
         """
-        number = self._validate_number(number)
-        
+        number = cls._validate_number(number)
         if verify_option is None or not isinstance(verify_option, SendLKVerifyOption):
             raise SendLKException(message="Invalid verify option")
-        
         token = ""
-        
         try:
             token, code = encrypt_token(length=verify_option.code_length, expire=verify_option.expires_in)
+
             text = verify_option.get_text(code)
-            response = self.send(number=number, text=text, sender_id=verify_option.sender_id)
+            response = cls.send(number=number, text=text, sender_id=verify_option.sender_id)
+
             response.add_data(key="token", value=token)
             return response
         except SendLKException as e:
             raise e
         except Exception as e:
-            raise SendLKException(message=str(e))
+            raise SendLKException(message=str(e)) from e
     
     @classmethod
-    def validate_verify_code(self, code: str, token: str) -> SmsResponse:
+    def validate_verify_code(cls, code: str, token: str) -> SmsResponse:
         """
         Validate a verify code.
         Arguments:
@@ -170,21 +161,19 @@ class SMS:
         """
         if code is None or not isinstance(code, str):
             raise SendLKException(message="Invalid code")
-        
         if token is None or not isinstance(token, str):
             raise SendLKException(message="Invalid token")
-        
         try:
             code = decrypt_token(token=token, verify_code=code)
             return SmsResponse(message="Code is valid", data={"code": code})
         except SendLKException as e:
             raise e
         except Exception as e:
-            raise SendLKException(message=str(e))
+            raise SendLKException(message=str(e)) from e
         
 class Profile:
     @classmethod
-    def balance(self) -> ProfileResponse:
+    def balance(cls) -> ProfileResponse:
         """
         Get the balance.
         Returns:
@@ -200,5 +189,6 @@ class Profile:
         response_data = response.json()
         if response_data.get("status", None) == "success":
             return ProfileResponse(message=response_data.get("message", None), data=response_data.get("data"))
+
         else:
             raise SendLKException(message=response_data.get("message", None))

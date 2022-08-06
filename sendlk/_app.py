@@ -26,7 +26,7 @@ class App(IApp):
             Exception: If initialization happend twice.
         """
         if App.__instance is not None:
-            raise Exception("This class is a singleton!")
+            raise ValueError("App is a singleton class. Use get_instance() to get the instance.")
         self.token = token
         self.secret = secret
         self.url = "https://sms.send.lk/api/v3/"
@@ -49,8 +49,4 @@ class App(IApp):
     
     @staticmethod
     def get_headers() -> dict:
-        return {
-            "Authorization": "Bearer " + App.__instance.token,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        }
+        return {"Authorization": f"Bearer {App.__instance.token}", "Content-Type": "application/json", "Accept": "application/json"}

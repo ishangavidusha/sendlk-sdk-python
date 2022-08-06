@@ -12,10 +12,12 @@ class BaseResponse:
         return self._message
 
     def __str__(self):
-        return '{} : {}'.format(self._status, self._message)
+        return f'{self._status} : {self._message}'
 
 class SmsResponse(BaseResponse):
-    def __init__(self, status: str = "SUCCESS", message: str = "", data: dict = {}):
+    def __init__(self, status: str = "SUCCESS", message: str = "", data: dict = None):
+        if data is None:
+            data = {}
         super().__init__(status, message)
         self._uid = data.get('uid')
         self._receiver = data.get('to')
@@ -57,7 +59,9 @@ class SmsResponse(BaseResponse):
         self._data[key] = value
 
 class ProfileResponse(BaseResponse):
-    def __init__(self, status: str = "SUCCESS", message: str = "", data: dict = {}):
+    def __init__(self, status: str = "SUCCESS", message: str = "", data: dict = None):
+        if data is None:
+            data = {}
         super().__init__(status, message)
         self._used_unit = data.get('used_unit')
         self._remaining_unit = data.get('remaining_unit')
