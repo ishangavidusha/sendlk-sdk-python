@@ -26,13 +26,14 @@ pip install sendlk
 ```python
 import sendlk
 
-# Befor import any module from sendlk you should initialize it first
+# Before import any module from sendlk you should initialize it first
 # secret will use in the OTP/Phone number verify module
 sendlk.initialize("sendlk-token", "my-custom-super-secret")
 
 from sendlk.responses import SmsResponse, ProfileResponse
 from sendlk.exceptions import SendLKException
 from sendlk.engine import SMS, Profile
+from sendlk.options import SendLKVerifyOption, SendLKCodeTemplate
 
 try:
     response: SmsResponse = SMS.send("07XXXXXXXX", "Hello World!", "SendTest")
@@ -43,35 +44,42 @@ except SendLKException as e:
 ```
 ## Send OTP/Verify Code
 ```python
+import sendlk
+
+# Before import any module from sendlk you should initialize it first
+# secret will use in the OTP/Phone number verify module
+sendlk.initialize("sendlk-token", "my-custom-super-secret")
+
 from sendlk.responses import SmsResponse
 from sendlk.exceptions import SendLKException
 from sendlk.engine import SMS
-from sendlk.options import SendLKVerifyOption, SendLKCodeTemplet
+from sendlk.options import SendLKVerifyOption, SendLKCodeTemplate
 
-# If you want to use custom text/body you can create custom templet using "SendLKCodeTemplet"
-# If code text templet not given default one will be used
+# If you want to use custom text/body you can create custom template using "SendLKCodeTemplate"
+# If code text template not given default one will be used
 # Default: "0000 is your verification code."
-class CustomCodeTemplet(SendLKCodeTemplet):
+class CustomCodeTemplate(SendLKCodeTemplate):
     def __init__(self):
         super().__init__()
         
     def text(self, code: str) -> str:
-        return f"{code} is the varification code for foo serveice."
-
-# Create option object
+        return f"{code} is the verification code for foo service."
+    
 options: SendLKVerifyOption = SendLKVerifyOption(
-    code_length=6,
-    expires_in=5,
-    sender_id="SendTest",
-    code_templet=CustomCodeTemplet()
+    code_length=6, # Length of the code
+    expires_in=5, # Time in minutes the code will expire
+    sender_id=SENDER_ID, # Sender ID
+    subject="foo", # Subject of the token
+    code_template=CustomCodeTemplate() # Custom code template
 )
 
 try:
-    response = SMS.send_verify_code("07XXXXXXXX", options)
+    response: SmsResponse = SMS.send_verify_code(PHONE_NUMBER, options)
     token = response.data.get("token", None)
     code = input("Enter the code: ")
-    response = SMS.validate_verify_code(code, token)
+    response: SmsResponse = SMS.validate_verify_code(code, token)
     print(response)
+    print(response.data)
 except SendLKException as e:
     print(e)
 
@@ -80,7 +88,7 @@ except SendLKException as e:
 ```python
 import sendlk
 
-# Befor import any module from sendlk you should initialize it first
+# Before import any module from sendlk you should initialize it first
 # secret will use in the OTP/Phone number verify module
 sendlk.initialize("sendlk-token", "my-custom-super-secret")
 

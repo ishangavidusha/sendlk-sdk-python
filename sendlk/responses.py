@@ -25,7 +25,7 @@ class SmsResponse(BaseResponse):
         self._text = data.get('message')
         self._text_status = data.get('status')
         self._cost = data.get('cost')
-        self._data = {}
+        self._data = data
         
     @property
     def uid(self):

@@ -6,7 +6,7 @@ from time import time
 
 App = _app.App.get_instance()
 
-def encrypt_token(length: int = 4, expire: int = 3) -> tuple:
+def encrypt_token(payload: str, length: int = 4, expire: int = 3) -> tuple:
     """
     Get the token to use.
     Arguments:
@@ -15,7 +15,7 @@ def encrypt_token(length: int = 4, expire: int = 3) -> tuple:
     Returns:
         str -- The token.
     """
-    
+
     if not length or not isinstance(length, int):
         length = 4
 
@@ -24,6 +24,9 @@ def encrypt_token(length: int = 4, expire: int = 3) -> tuple:
 
     if length < 1:
         raise SendLKException(message="Length must be greater than 0.")
+
+    if not payload or not isinstance(payload, str):
+        raise SendLKException(message="Invalid Subject.")
 
     digits = "0123456789"
 
@@ -35,13 +38,13 @@ def encrypt_token(length: int = 4, expire: int = 3) -> tuple:
     # Time stamp
     milliseconds = int(time() * 1000)
 
-    payload_string = f"{milliseconds}:{code}:{expire}"
+    fullPayload = f"{milliseconds}:{code}:{expire}:{payload}"
 
     # Encrypt
     cipher_suite = Fernet(App.secret.encode())
-    payload = cipher_suite.encrypt(payload_string.encode()).decode()
+    token = cipher_suite.encrypt(fullPayload.encode()).decode()
 
-    return (payload, code)
+    return (token, code)
 
 def decrypt_token(token: str, verify_code: str) -> str:
     """
@@ -58,16 +61,16 @@ def decrypt_token(token: str, verify_code: str) -> str:
         raise SendLKException(message="Invalid code.")
     try:
         cipher_suite = Fernet(App.secret.encode())
-        payload = cipher_suite.decrypt(token.encode()).decode()
-        if not payload:
+        fullPayload = cipher_suite.decrypt(token.encode()).decode()
+        if not fullPayload:
             raise SendLKException(message="Invalid token.")
-        token_time, code, expire = payload.split(":")
+        token_time, code, expire, payload = fullPayload.split(":")
         current_time = int(time() * 1000)
         if int(token_time) + int(expire) * 60000 < current_time:
             raise SendLKException(message="Token expired.")
         if code != verify_code:
             raise SendLKException(message="Invalid code.")
-        return code
+        return payload
     except SendLKException as e:
         raise e
     except Exception as e:

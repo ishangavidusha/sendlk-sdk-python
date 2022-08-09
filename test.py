@@ -14,7 +14,6 @@ from sendlk.responses import SmsResponse, ProfileResponse
 from sendlk.exceptions import SendLKException
 from sendlk.engine import SMS, Profile
 from sendlk.options import SendLKVerifyOption, SendLKCodeTemplate
-from cryptography.fernet import Fernet
 
 try:
     response: SmsResponse = SMS.send(PHONE_NUMBER, "Hello World!", SENDER_ID)
@@ -39,14 +38,16 @@ options: SendLKVerifyOption = SendLKVerifyOption(
     code_length=6,
     expires_in=5,
     sender_id=SENDER_ID,
+    subject="foo",
     code_template=CustomCodeTemplate()
 )
 
 try:
-    response = SMS.send_verify_code(PHONE_NUMBER, options)
+    response: SmsResponse = SMS.send_verify_code(PHONE_NUMBER, options)
     token = response.data.get("token", None)
     code = input("Enter the code: ")
-    response = SMS.validate_verify_code(code, token)
+    response: SmsResponse = SMS.validate_verify_code(code, token)
     print(response)
+    print(response.data)
 except SendLKException as e:
     print(e)

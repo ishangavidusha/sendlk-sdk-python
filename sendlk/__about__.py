@@ -1,6 +1,6 @@
 """About information (version, etc) for Send.lk SDK."""
 
-__version__ = '0.1.1'
+__version__ = '0.2.0'
 __title__ = 'sendlk'
 __author__ = 'Ishanga Vidusha'
 __author_email__ = 'ishangavidusha@gmail.com'

@@ -134,7 +134,7 @@ class SMS:
             raise SendLKException(message="Invalid verify option")
         token = ""
         try:
-            token, code = encrypt_token(length=verify_option.code_length, expire=verify_option.expires_in)
+            token, code = encrypt_token(payload=verify_option.subject, length=verify_option.code_length, expire=verify_option.expires_in)
 
             text = verify_option.get_text(code)
             response = cls.send(number=number, text=text, sender_id=verify_option.sender_id)
@@ -164,8 +164,8 @@ class SMS:
         if token is None or not isinstance(token, str):
             raise SendLKException(message="Invalid token")
         try:
-            code = decrypt_token(token=token, verify_code=code)
-            return SmsResponse(message="Code is valid", data={"code": code})
+            subject = decrypt_token(token=token, verify_code=code)
+            return SmsResponse(message="Code is valid", data={"sub": subject})
         except SendLKException as e:
             raise e
         except Exception as e:

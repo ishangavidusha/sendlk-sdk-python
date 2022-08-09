@@ -34,6 +34,7 @@ class SendLKVerifyOption:
         code_length: int = 4,
         expires_in: int = 3,
         sender_id: str = "",
+        subject: str = "",
         code_template: SendLKCodeTemplate = _DefaultSendLKCodeTemplate(),
         ) -> None:
         
@@ -43,12 +44,15 @@ class SendLKVerifyOption:
             SendLKException(message="Invalid code expire.")
         if not sender_id or not isinstance(sender_id, str):
             SendLKException(message="Invalid sender id.")
+        if not subject or not isinstance(subject, str):
+            SendLKException(message="Invalid subject.")
         if not code_template or not isinstance(code_template, SendLKCodeTemplate):
             SendLKException(message="Invalid code template.")
             
         self._code_length = code_length
         self._expires_in = expires_in
         self._sender_id = sender_id
+        self._subject = subject
         self._code_template = code_template
         
     @property
@@ -62,6 +66,10 @@ class SendLKVerifyOption:
     @property
     def sender_id(self) -> str:
         return self._sender_id
+    
+    @property
+    def subject(self) -> str:
+        return self._subject
     
     def get_text(self, code: str) -> str:
         if self._code_template.validate(code):
